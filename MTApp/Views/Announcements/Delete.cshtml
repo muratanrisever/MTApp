@@ -1,0 +1,49 @@
+﻿@model MTApp.Models.Announcement
+
+@{
+    ViewData["Title"] = "Duyuruyu Sil";
+}
+
+<h1 class="text-danger mb-4">Silmek İstediğinizden Emin Misiniz?</h1>
+
+<h3 class="mb-3">Bu duyuruyu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</h3>
+<div>
+    <h4 class="mb-3">@Html.DisplayFor(model => model.Title)</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Content)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Content)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.PublishDate)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.PublishDate)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.EndDate)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.EndDate)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger rounded-pill shadow-sm">
+            <i class="fas fa-trash-alt"></i> Sil
+        </button>
+        <a asp-action="Index" class="btn btn-secondary rounded-pill shadow-sm">
+            <i class="fas fa-arrow-left"></i> Listeye Geri Dön
+        </a>
+    </form>
+</div>

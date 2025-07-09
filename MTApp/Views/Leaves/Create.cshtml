@@ -1,0 +1,63 @@
+﻿@model MTApp.Models.Leave
+
+@{
+    ViewData["Title"] = "Yeni İzin Talebi Oluştur";
+}
+
+<h1 class="text-primary mb-4">Yeni İzin Talebi</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <div class="form-group mb-3">
+                <label asp-for="EmployeeId" class="control-label"></label>
+                <select asp-for="EmployeeId" class="form-control rounded-pill" asp-items="ViewBag.EmployeeId">
+                    <option value="">Personel Seçiniz</option>
+                </select>
+                <span asp-validation-for="EmployeeId" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="LeaveType" class="control-label"></label>
+                <input asp-for="LeaveType" class="form-control rounded-pill" />
+                <span asp-validation-for="LeaveType" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="StartDate" class="control-label"></label>
+                <input asp-for="StartDate" class="form-control rounded-pill" type="date" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="EndDate" class="control-label"></label>
+                <input asp-for="EndDate" class="form-control rounded-pill" type="date" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="NumberOfDays" class="control-label"></label>
+                <input asp-for="NumberOfDays" class="form-control rounded-pill" type="number" step="0.5" />
+                <span asp-validation-for="NumberOfDays" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control rounded-lg" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <!-- Status ve RequestDate alanları otomatik ayarlanacağı için formda gösterilmez -->
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary rounded-pill shadow-sm">
+                    <i class="fas fa-save"></i> Oluştur
+                </button>
+                <a asp-action="Index" class="btn btn-secondary rounded-pill shadow-sm">
+                    <i class="fas fa-arrow-left"></i> Listeye Geri Dön
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

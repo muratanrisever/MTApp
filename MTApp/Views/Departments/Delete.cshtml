@@ -1,0 +1,37 @@
+﻿@model MTApp.Models.Department
+
+@{
+    ViewData["Title"] = "Departmanı Sil";
+}
+
+<h1 class="text-danger mb-4">Silmek İstediğinizden Emin Misiniz?</h1>
+
+<h3 class="mb-3">Bu departmanı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</h3>
+<div>
+    <h4 class="mb-3">@Html.DisplayFor(model => model.Name)</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger rounded-pill shadow-sm">
+            <i class="fas fa-trash-alt"></i> Sil
+        </button>
+        <a asp-action="Index" class="btn btn-secondary rounded-pill shadow-sm">
+            <i class="fas fa-arrow-left"></i> Listeye Geri Dön
+        </a>
+    </form>
+</div>

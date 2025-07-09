@@ -1,0 +1,46 @@
+﻿@model MTApp.Models.Announcement
+
+@{
+    ViewData["Title"] = "Duyuru Detayları";
+}
+
+<h1 class="text-primary mb-4">Duyuru Detayları</h1>
+
+<div>
+    <h4 class="mb-3">@Html.DisplayFor(model => model.Title)</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Content)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Content)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.PublishDate)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.PublishDate)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.EndDate)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.EndDate)
+        </dd>
+    </dl>
+</div>
+<div class="mt-4">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning rounded-pill shadow-sm">
+        <i class="fas fa-edit"></i> Düzenle
+    </a>
+    <a asp-action="Index" class="btn btn-secondary rounded-pill shadow-sm">
+        <i class="fas fa-arrow-left"></i> Listeye Geri Dön
+    </a>
+</div>

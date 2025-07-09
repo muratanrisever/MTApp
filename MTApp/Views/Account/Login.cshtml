@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Giriş Yap";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Ana layout'u kullan
+}
+
+<h1 class="text-primary mb-4">Giriş Yap</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Login" method="post">
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+            <div class="form-group mb-3">
+                <label for="username" class="control-label">Kullanıcı Adı</label>
+                <input id="username" name="username" class="form-control rounded-pill" />
+                <span class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="password" class="control-label">Şifre</label>
+                <input id="password" name="password" class="form-control rounded-pill" type="password" />
+                <span class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary rounded-pill shadow-sm">
+                    <i class="fas fa-sign-in-alt"></i> Giriş Yap
+                </button>
+                <a asp-action="Register" class="btn btn-secondary rounded-pill shadow-sm">
+                    <i class="fas fa-user-plus"></i> Yeni Hesap Oluştur
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

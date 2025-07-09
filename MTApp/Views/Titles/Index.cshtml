@@ -1,0 +1,53 @@
+﻿@model IEnumerable<MTApp.Models.Title>
+
+@{
+    ViewData["Title"] = "Unvanlar";
+}
+
+<h1 class="text-primary mb-4">Unvanlar</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-success rounded-pill shadow-sm">
+        <i class="fas fa-plus-circle"></i> Yeni Unvan Ekle
+    </a>
+</p>
+
+<div class="table-responsive rounded-lg shadow-sm">
+    <table class="table table-hover table-striped">
+        <thead class="bg-primary text-white">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning rounded-pill">
+                            <i class="fas fa-edit"></i> Düzenle
+                        </a> |
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info rounded-pill">
+                            <i class="fas fa-info-circle"></i> Detaylar
+                        </a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger rounded-pill">
+                            <i class="fas fa-trash-alt"></i> Sil
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

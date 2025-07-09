@@ -1,0 +1,196 @@
+﻿@model MTApp.Models.Employee
+
+@{
+    ViewData["Title"] = "Personel Düzenle";
+}
+
+<h1 class="text-primary mb-4">Personel Düzenle</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <!-- Dosya yükleme için enctype="multipart/form-data" eklenmeli -->
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <input type="hidden" asp-for="Id" />
+            <!-- Mevcut fotoğraf ve özgeçmiş yollarını gizli alanlarda tut -->
+            <input type="hidden" asp-for="PhotoUrl" />
+            <input type="hidden" asp-for="ResumePath" />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="EmployeeNumber" class="control-label"></label>
+                        <input asp-for="EmployeeNumber" class="form-control rounded-pill" />
+                        <span asp-validation-for="EmployeeNumber" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="FirstName" class="control-label"></label>
+                        <input asp-for="FirstName" class="form-control rounded-pill" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="LastName" class="control-label"></label>
+                        <input asp-for="LastName" class="form-control rounded-pill" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="NationalId" class="control-label"></label>
+                        <input asp-for="NationalId" class="form-control rounded-pill" />
+                        <span asp-validation-for="NationalId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="DateOfBirth" class="control-label"></label>
+                        <input asp-for="DateOfBirth" class="form-control rounded-pill" type="date" />
+                        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="Gender" class="control-label"></label>
+                        <select asp-for="Gender" class="form-control rounded-pill">
+                            <option value="">Seçiniz</option>
+                            <option value="Erkek">Erkek</option>
+                            <option value="Kadın">Kadın</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="MaritalStatus" class="control-label"></label>
+                        <input asp-for="MaritalStatus" class="form-control rounded-pill" />
+                        <span asp-validation-for="MaritalStatus" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="Nationality" class="control-label"></label>
+                        <input asp-for="Nationality" class="form-control rounded-pill" />
+                        <span asp-validation-for="Nationality" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input asp-for="Email" class="form-control rounded-pill" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="PhoneNumber" class="control-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control rounded-pill" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Address" class="control-label"></label>
+                <textarea asp-for="Address" class="form-control rounded-lg" rows="3"></textarea>
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="HireDate" class="control-label"></label>
+                        <input asp-for="HireDate" class="form-control rounded-pill" type="date" />
+                        <span asp-validation-for="HireDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="TerminationDate" class="control-label"></label>
+                        <input asp-for="TerminationDate" class="form-control rounded-pill" type="date" />
+                        <span asp-validation-for="TerminationDate" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="DepartmentId" class="control-label"></label>
+                        <select asp-for="DepartmentId" class="form-control rounded-pill" asp-items="ViewBag.DepartmentId">
+                            <option value="">Departman Seçiniz</option>
+                        </select>
+                        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="TitleId" class="control-label"></label>
+                        <select asp-for="TitleId" class="form-control rounded-pill" asp-items="ViewBag.TitleId">
+                            <option value="">Unvan Seçiniz</option>
+                        </select>
+                        <span asp-validation-for="TitleId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="Salary" class="control-label"></label>
+                        <input asp-for="Salary" class="form-control rounded-pill" />
+                        <span asp-validation-for="Salary" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <!-- Fotoğraf Yükleme Alanı -->
+                    <div class="form-group mb-3">
+                        <label for="photoFile" class="control-label">Fotoğraf Yükle</label>
+                        <input type="file" id="photoFile" name="photoFile" class="form-control rounded-pill" accept="image/*" />
+                        @if (!string.IsNullOrEmpty(Model.PhotoUrl))
+                        {
+                            <small class="form-text text-muted">Mevcut Fotoğraf: <a href="@Url.Content(Model.PhotoUrl)" target="_blank">Görüntüle</a></small>
+                            <img src="@Model.PhotoUrl" alt="Mevcut Fotoğraf" class="img-thumbnail mt-2" style="width: 100px; height: 100px; object-fit: cover;" onerror="this.onerror=null;this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=No+Image';" />
+                        }
+                    </div>
+                </div>
+            </div>
+            <!-- Özgeçmiş Yükleme Alanı -->
+            <div class="form-group mb-3">
+                <label for="resumeFile" class="control-label">Özgeçmiş Yükle</label>
+                <input type="file" id="resumeFile" name="resumeFile" class="form-control rounded-pill" accept=".pdf,.doc,.docx" />
+                @if (!string.IsNullOrEmpty(Model.ResumePath))
+                {
+                    <small class="form-text text-muted">Mevcut Özgeçmiş: <a href="@Url.Content(Model.ResumePath)" target="_blank">Görüntüle</a></small>
+                }
+            </div>
+
+            <div class="form-group form-check mb-3">
+                <input class="form-check-input" asp-for="IsActive" />
+                <label class="form-check-label" asp-for="IsActive"></label>
+            </div>
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary rounded-pill shadow-sm">
+                    <i class="fas fa-save"></i> Kaydet
+                </button>
+                <a asp-action="Index" class="btn btn-secondary rounded-pill shadow-sm">
+                    <i class="fas fa-arrow-left"></i> Listeye Geri Dön
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
