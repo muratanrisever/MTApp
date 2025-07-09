@@ -3,6 +3,7 @@ using MTApp.Data;
 using MTApp.Models;
 using Microsoft.AspNetCore.Authentication.Cookies; // Cookie tabanlý kimlik doðrulama için
 using Microsoft.AspNetCore.Authorization; // Yetkilendirme için
+using Microsoft.Extensions.Logging; // ILogger için gerekli
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,16 +37,34 @@ builder.Services.AddAuthorization(options =>
 
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages(); // Razor sayfalarýný kullanabilmek için (Identity UI olmasa da bazý durumlarda gerekli olabilir)
+builder.Services.AddRazorPages(); // Razor sayfalarýný kullanabilmek için
 
 var app = builder.Build();
+
+// Otomatik veritabaný geçiþlerini uygulama
+// Bu kýsým, uygulamanýn her baþlangýcýnda bekleyen migrations'larý kontrol eder ve uygular.
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    try
+    {
+        dbContext.Database.Migrate(); // Bekleyen tüm geçiþleri uygular
+    }
+    catch (Exception ex)
+    {
+        // Hata durumunda loglama yapabilirsiniz.
+        // ILogger servisini alarak hatayý kaydederiz.
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Veritabaný geçiþleri sýrasýnda bir hata oluþtu.");
+    }
+}
 
 // HTTP istek iþlem hattýný yapýlandýr.
 if (app.Environment.IsDevelopment())
 {
     // Geliþtirme ortamýnda veritabaný hatalarý için özel sayfa göster.
-    // Identity UI kaldýrýldýðý için UseMigrationsEndPoint'i kaldýrýyoruz.
-    // app.UseMigrationsEndPoint(); // Bu satýrý kaldýrýyoruz
+    // Identity UI kaldýrýldýðý için UseMigrationsEndPoint'i kaldýrdýk.
+    // app.UseMigrationsEndPoint(); // Bu satýr kaldýrýldý
 }
 else
 {
@@ -70,9 +89,6 @@ app.MapControllerRoute(
 
 // Razor sayfalarýný (Identity sayfalarý gibi) haritala.
 // Identity UI kaldýrýldýðý için MapRazorPages'i de kaldýrýyoruz.
-// app.MapRazorPages(); // Bu satýrý kaldýrýyoruz, eðer sadece MVC kullanýyorsanýz.
-// Eðer Identity UI'ý tamamen kaldýrdýysanýz ve Razor Pages kullanmýyorsanýz bu satýrý kaldýrýn.
-// Ancak _LoginPartial gibi bazý yerlerde Razor Pages'e ihtiyaç duyulabilir.
-// Eðer _LoginPartial'ý da kendimiz yapýyorsak bu satýr kaldýrýlabilir.
+// app.MapRazorPages(); // Bu satýr kaldýrýldý, eðer sadece MVC kullanýyorsanýz.
 
 app.Run();
