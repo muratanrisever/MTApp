@@ -1,18 +1,43 @@
-# Stage 1: Build the application
+# Stage 1: Build and Publish the application
+# .NET 6.0 SDK imajýný kullanarak uygulamayý derle ve yayýnla
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+
+# Çalýþma dizinini /src olarak ayarla
 WORKDIR /src
+
+# .csproj dosyasýný kopyala ve baðýmlýlýklarý geri yükle
+# Bu, Docker'ýn katmanlama önbelleðini (caching) daha verimli kullanmasýný saðlar.
+# MTApp/MTApp.csproj yolu, projenizin GitHub deponuzdaki klasör yapýsýna göre ayarlanmalýdýr.
+# Eðer MTApp.csproj doðrudan deponun kökündeyse: COPY ["MTApp.csproj", "."]
+# Eðer MTApp klasörü içindeyse:
 COPY ["MTApp/MTApp.csproj", "MTApp/"]
 RUN dotnet restore "MTApp/MTApp.csproj"
-COPY . .
-WORKDIR "/src/MTApp"
-RUN dotnet build "MTApp.csproj" -c Release -o /app/build
 
-# Stage 2: Publish the application
-FROM build AS publish
+# Uygulamanýn geri kalan kodunu kopyala
+COPY . .
+
+# Çalýþma dizinini projenin kök klasörüne ayarla
+# MTApp klasörü içindeyse:
+WORKDIR "/src/MTApp"
+# Eðer MTApp.csproj doðrudan deponun kökündeyse: WORKDIR "/src"
+
+# Uygulamayý yayýnla (build iþlemi de dahil)
+# -c Release: Release modunda yayýnla
+# -o /app/publish: Çýktýyý /app/publish dizinine kaydet
+# /p:UseAppHost=false: Bazý hosting ortamlarýnda (Render gibi) sorunlarý önlemek için
 RUN dotnet publish "MTApp.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-# Stage 3: Run the application
+# Stage 2: Create the final runtime image
+# Uygulamayý çalýþtýrmak için .NET 6.0 ASP.NET çalýþma zamaný imajýný kullan
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS final
+
+# Çalýþma dizinini /app olarak ayarla
 WORKDIR /app
-COPY --from=publish /app/publish .
+
+# Yayýnlanmýþ çýktýlarý 'build' aþamasýndan al ve final imajýna kopyala
+# Bu, sadece uygulamanýn çalýþmasý için gerekli olan dosyalarý içerir, SDK'yý deðil.
+COPY --from=build /app/publish .
+
+# Uygulamanýn baþlangýç noktasýný tanýmla
+# MTApp.dll yerine projenizin ana DLL adýný yazýn (genellikle projenizin adýyla aynýdýr).
 ENTRYPOINT ["dotnet", "MTApp.dll"]
