@@ -3,14 +3,17 @@
     "api/index.js": {
       "runtime": "@vercel/node@2.x",
       "includeFiles": [
-        "bin/Release/netcoreapp6.0/publish/**" // .NET Core publish çýktýnýzýn yolu
+        "publish_output/**"
       ]
     }
   },
   "builds": [
     {
-      "src": "YourProject.csproj", // Projenizin .csproj dosyasýnýn yolu
-      "use": "@vercel/dotnet" // veya .NET Core projenizi publish etmek için kendi komutunuz
+      "src": "YourProject.csproj",
+      "use": "@vercel/static-build",
+      "config": {
+        "buildCommand": "dotnet publish -c Release -o publish_output"
+      }
     }
   ],
   "routes": [
@@ -20,7 +23,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html" // veya eðer tüm trafik api'ye yönlendirilecekse "/api"
+      "dest": "/index.html"
     }
   ]
 }
