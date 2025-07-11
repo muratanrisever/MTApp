@@ -1,0 +1,52 @@
+﻿@model MTApp.Models.Training
+
+@{
+    ViewData["Title"] = "Eğitim Detayları";
+}
+
+<h1 class="text-primary mb-4">Eğitim Detayları</h1>
+
+<div>
+    <h4 class="mb-3">@Html.DisplayFor(model => model.Name)</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Provider)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Provider)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.ParticipantCount)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.ParticipantCount)
+        </dd>
+    </dl>
+</div>
+<div class="mt-4">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning rounded-pill shadow-sm">
+        <i class="fas fa-edit"></i> Düzenle
+    </a>
+    <a asp-action="Index" class="btn btn-secondary rounded-pill shadow-sm">
+        <i class="fas fa-arrow-left"></i> Listeye Geri Dön
+    </a>
+</div>

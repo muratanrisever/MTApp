@@ -2,7 +2,6 @@
 
 namespace MTApp.Models
 {
-    // Özel kullanıcı modelimiz. IdentityUser'dan kalıtım almaz.
     public class User
     {
         [Key]
@@ -20,13 +19,13 @@ namespace MTApp.Models
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Şifre Hash'i zorunludur.")]
-        [StringLength(255)] // Şifre hash'i için yeterli uzunluk
+        [StringLength(255)]
         [Display(Name = "Şifre Hash")]
         public string PasswordHash { get; set; } = string.Empty;
 
         [StringLength(50)]
         [Display(Name = "Rol")]
-        public string Role { get; set; } = "User"; // Varsayılan rol: User (Admin, HR vb. eklenebilir)
+        public string Role { get; set; } = "User";
 
         [Display(Name = "Kayıt Tarihi")]
         public DateTime RegistrationDate { get; set; } = DateTime.Now;

@@ -9,11 +9,9 @@
 <hr />
 <div class="row">
     <div class="col-md-8">
-        <!-- Dosya yükleme için enctype="multipart/form-data" eklenmeli -->
         <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
             <input type="hidden" asp-for="Id" />
-            <!-- Mevcut fotoğraf ve özgeçmiş yollarını gizli alanlarda tut -->
             <input type="hidden" asp-for="PhotoUrl" />
             <input type="hidden" asp-for="ResumePath" />
 
@@ -151,7 +149,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <!-- Fotoğraf Yükleme Alanı -->
+                    <!-- image upload -->
                     <div class="form-group mb-3">
                         <label for="photoFile" class="control-label">Fotoğraf Yükle</label>
                         <input type="file" id="photoFile" name="photoFile" class="form-control rounded-pill" accept="image/*" />
@@ -163,7 +161,7 @@
                     </div>
                 </div>
             </div>
-            <!-- Özgeçmiş Yükleme Alanı -->
+            <!-- cv upload -->
             <div class="form-group mb-3">
                 <label for="resumeFile" class="control-label">Özgeçmiş Yükle</label>
                 <input type="file" id="resumeFile" name="resumeFile" class="form-control rounded-pill" accept=".pdf,.doc,.docx" />

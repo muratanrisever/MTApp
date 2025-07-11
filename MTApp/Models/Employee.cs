@@ -5,7 +5,7 @@ namespace MTApp.Models
 {
     public class Employee
     {
-        [Key] // Primary Key
+        [Key]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Sicil Numarası zorunludur.")]
@@ -36,11 +36,11 @@ namespace MTApp.Models
         [Required(ErrorMessage = "Cinsiyet zorunludur.")]
         [StringLength(10, ErrorMessage = "Cinsiyet en fazla 10 karakter olabilir.")]
         [Display(Name = "Cinsiyet")]
-        public string Gender { get; set; } = string.Empty; // Erkek, Kadın
+        public string Gender { get; set; } = string.Empty;
 
         [StringLength(20, ErrorMessage = "Medeni Durum en fazla 20 karakter olabilir.")]
         [Display(Name = "Medeni Durum")]
-        public string? MaritalStatus { get; set; } // Evli, Bekar
+        public string? MaritalStatus { get; set; }
 
         [StringLength(50, ErrorMessage = "Uyruk en fazla 50 karakter olabilir.")]
         [Display(Name = "Uyruk")]
@@ -66,24 +66,24 @@ namespace MTApp.Models
 
         [DataType(DataType.Date)]
         [Display(Name = "İşten Çıkış Tarihi")]
-        public DateTime? TerminationDate { get; set; } // İsteğe bağlı
+        public DateTime? TerminationDate { get; set; }
 
         [Required(ErrorMessage = "Departman zorunludur.")]
         [Display(Name = "Departman")]
-        public int DepartmentId { get; set; } // Foreign Key
+        public int DepartmentId { get; set; }
 
         [ForeignKey("DepartmentId")]
-        public Department? Department { get; set; } // Navigation Property
+        public Department? Department { get; set; }
 
         [Required(ErrorMessage = "Unvan zorunludur.")]
         [Display(Name = "Unvan")]
-        public int TitleId { get; set; } // Foreign Key
+        public int TitleId { get; set; }
 
         [ForeignKey("TitleId")]
-        public Title? Title { get; set; } // Navigation Property
+        public Title? Title { get; set; }
 
         [Required(ErrorMessage = "Maaş zorunludur.")]
-        [Column(TypeName = "decimal(18, 2)")] // Ondalıklı sayı için veritabanı tipi
+        [Column(TypeName = "decimal(18, 2)")]
         [Display(Name = "Maaş")]
         public decimal Salary { get; set; }
 
@@ -92,9 +92,9 @@ namespace MTApp.Models
         public string? PhotoUrl { get; set; }
 
         [Display(Name = "Özgeçmiş")]
-        public string? ResumePath { get; set; } // Özgeçmiş dosyasının yolu
+        public string? ResumePath { get; set; }
 
         [Display(Name = "Aktif Mi?")]
-        public bool IsActive { get; set; } = true; // Personelin aktif olup olmadığı
+        public bool IsActive { get; set; } = true;
     }
 }

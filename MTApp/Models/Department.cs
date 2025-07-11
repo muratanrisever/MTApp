@@ -16,7 +16,6 @@ namespace MTApp.Models
         [Display(Name = "Açıklama")]
         public string? Description { get; set; }
 
-        // Navigation Property: Bu departmana bağlı çalışanlar
         public ICollection<Employee>? Employees { get; set; }
     }
 }

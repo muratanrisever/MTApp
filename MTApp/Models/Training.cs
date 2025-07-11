@@ -29,7 +29,5 @@ namespace MTApp.Models
         [Range(0, int.MaxValue, ErrorMessage = "Katılımcı sayısı negatif olamaz.")]
         public int ParticipantCount { get; set; }
 
-        // Navigation Property: Bu eğitime katılan personeller (Many-to-Many için ayrı bir tablo gerekebilir)
-        // Şimdilik basit tutalım.
     }
 }

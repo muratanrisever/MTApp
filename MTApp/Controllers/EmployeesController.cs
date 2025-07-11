@@ -8,12 +8,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MTApp.Data;
 using MTApp.Models;
-using Microsoft.AspNetCore.Hosting; // Dosya yükleme için gerekli
-using System.IO; // Dosya işlemleri için gerekli
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
+using OfficeOpenXml; // EPPlus için gerekli using
+using OfficeOpenXml.Style; // EPPlus stil için (isteğe bağlı)
 
 namespace MTApp.Controllers
 {
-    // Sadece yetkili kullanıcıların bu kontrolcüye erişmesini sağlar.
     [Authorize]
     public class EmployeesController : Controller
     {
@@ -47,7 +48,6 @@ namespace MTApp.Controllers
         }
 
         // GET: Employees/Details/5
-        // Belirli bir personelin detaylarını gösterir.
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -56,8 +56,8 @@ namespace MTApp.Controllers
             }
 
             var employee = await _context.Employees
-                .Include(e => e.Department) // Departman bilgisini yükle
-                .Include(e => e.Title)      // Unvan bilgisini yükle
+                .Include(e => e.Department)
+                .Include(e => e.Title)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (employee == null)
             {
@@ -267,6 +267,145 @@ namespace MTApp.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Employees/BulkUpload
+        // Excel ile toplu personel yükleme formunu gösterir.
+        [HttpGet]
+        public IActionResult BulkUpload()
+        {
+            return View();
+        }
+
+        // POST: Employees/BulkUpload
+        // Excel dosyasını işler ve personelleri veritabanına kaydeder.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BulkUpload(IFormFile excelFile)
+        {
+            if (excelFile == null || excelFile.Length == 0)
+            {
+                TempData["ErrorMessage"] = "Lütfen yüklenecek bir Excel dosyası seçin.";
+                return View();
+            }
+
+            if (!Path.GetExtension(excelFile.FileName).Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
+            {
+                TempData["ErrorMessage"] = "Lütfen geçerli bir .xlsx Excel dosyası yükleyin.";
+                return View();
+            }
+
+            // EPPlus lisans bağlamını ayarla (ticari kullanım için lisans anahtarı gerekebilir)
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Ticari olmayan kullanım için
+
+            var importedEmployees = new List<Employee>();
+            var errors = new List<string>();
+            int rowCount = 0;
+
+            try
+            {
+                using (var stream = new MemoryStream())
+                {
+                    await excelFile.CopyToAsync(stream);
+                    using (var package = new ExcelPackage(stream))
+                    {
+                        var worksheet = package.Workbook.Worksheets.FirstOrDefault();
+                        if (worksheet == null)
+                        {
+                            TempData["ErrorMessage"] = "Excel dosyasında geçerli bir çalışma sayfası bulunamadı.";
+                            return View();
+                        }
+
+                        rowCount = worksheet.Dimension.Rows;
+
+                        // Başlık satırını atla (varsayılan olarak 1. satır başlık varsayılır)
+                        for (int row = 2; row <= rowCount; row++)
+                        {
+                            try
+                            {
+                                // Departman ve Unvan adlarını alıp ID'lerini bulacağız
+                                string departmentName = worksheet.Cells[row, 9].Text.Trim(); // Örnek: 9. sütun Departman Adı
+                                string titleName = worksheet.Cells[row, 10].Text.Trim(); // Örnek: 10. sütun Unvan Adı
+
+                                var department = await _context.Departments.FirstOrDefaultAsync(d => d.Name == departmentName);
+                                var title = await _context.Titles.FirstOrDefaultAsync(t => t.Name == titleName);
+
+                                if (department == null)
+                                {
+                                    errors.Add($"Satır {row}: '{departmentName}' adında bir departman bulunamadı. Lütfen önce departmanı ekleyin.");
+                                    continue;
+                                }
+                                if (title == null)
+                                {
+                                    errors.Add($"Satır {row}: '{titleName}' adında bir unvan bulunamadı. Lütfen önce unvanı ekleyin.");
+                                    continue;
+                                }
+
+                                var employee = new Employee
+                                {
+                                    EmployeeNumber = worksheet.Cells[row, 1].Text.Trim(),
+                                    FirstName = worksheet.Cells[row, 2].Text.Trim(),
+                                    LastName = worksheet.Cells[row, 3].Text.Trim(),
+                                    NationalId = worksheet.Cells[row, 4].Text.Trim(),
+                                    DateOfBirth = DateTime.Parse(worksheet.Cells[row, 5].Text.Trim()),
+                                    Gender = worksheet.Cells[row, 6].Text.Trim(),
+                                    MaritalStatus = worksheet.Cells[row, 7].Text.Trim(),
+                                    Nationality = worksheet.Cells[row, 8].Text.Trim(),
+                                    DepartmentId = department.Id, // ID'yi ata
+                                    TitleId = title.Id,         // ID'yi ata
+                                    Salary = decimal.Parse(worksheet.Cells[row, 11].Text.Trim()),
+                                    Email = worksheet.Cells[row, 12].Text.Trim(),
+                                    PhoneNumber = worksheet.Cells[row, 13].Text.Trim(),
+                                    Address = worksheet.Cells[row, 14].Text.Trim(),
+                                    HireDate = DateTime.Parse(worksheet.Cells[row, 15].Text.Trim()),
+                                    TerminationDate = string.IsNullOrEmpty(worksheet.Cells[row, 16].Text.Trim()) ? (DateTime?)null : DateTime.Parse(worksheet.Cells[row, 16].Text.Trim()),
+                                    IsActive = bool.Parse(worksheet.Cells[row, 17].Text.Trim()) // Varsayılan olarak 17. sütun
+                                };
+
+                                // Veritabanında sicil numarası veya TC kimlik numarası zaten varsa atla veya güncelle
+                                if (await _context.Employees.AnyAsync(e => e.EmployeeNumber == employee.EmployeeNumber || e.NationalId == employee.NationalId))
+                                {
+                                    errors.Add($"Satır {row}: Sicil Numarası '{employee.EmployeeNumber}' veya TC Kimlik Numarası '{employee.NationalId}' zaten mevcut. Bu personel atlandı.");
+                                    continue;
+                                }
+
+                                importedEmployees.Add(employee);
+                            }
+                            catch (Exception ex)
+                            {
+                                errors.Add($"Satır {row} okunurken hata oluştu: {ex.Message}");
+                            }
+                        }
+                    }
+                }
+
+                if (importedEmployees.Any())
+                {
+                    _context.Employees.AddRange(importedEmployees); // Toplu ekleme
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = $"{importedEmployees.Count} personel başarıyla eklendi.";
+                }
+                else
+                {
+                    TempData["WarningMessage"] = "Excel dosyasında eklenecek geçerli personel bulunamadı.";
+                }
+
+                if (errors.Any())
+                {
+                    TempData["ErrorList"] = errors; // Hataları TempData'ya kaydet
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Dosya işlenirken beklenmeyen bir hata oluştu: {ex.Message}";
+                if (errors.Any())
+                {
+                    TempData["ErrorList"] = errors;
+                }
+                return View();
+            }
         }
 
         private bool EmployeeExists(int id)

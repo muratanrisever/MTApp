@@ -1,0 +1,77 @@
+﻿@{
+    ViewData["Title"] = "Toplu Personel Yükleme";
+}
+
+<h1 class="text-primary mb-4">Toplu Personel Yükleme</h1>
+
+<hr />
+
+<div class="alert alert-info" role="alert">
+    <h4 class="alert-heading">Excel Şablonu Bilgisi</h4>
+    <p>Personel bilgilerini toplu olarak yüklemek için lütfen aşağıdaki sütun başlıklarını içeren bir Excel (.xlsx) dosyası kullanın. Sütun sırası önemlidir.</p>
+    <hr>
+    <p class="mb-0">
+        <strong>Sütun Sırası ve Başlıklar:</strong><br />
+        1. Sicil No (Zorunlu)<br />
+        2. Ad (Zorunlu)<br />
+        3. Soyad (Zorunlu)<br />
+        4. TC Kimlik No (Zorunlu)<br />
+        5. Doğum Tarihi (YYYY-MM-DD formatında, Zorunlu)<br />
+        6. Cinsiyet (Erkek/Kadın, Zorunlu)<br />
+        7. Medeni Durum (İsteğe Bağlı)<br />
+        8. Uyruk (İsteğe Bağlı)<br />
+        9. Departman Adı (Veritabanında mevcut olmalı, Zorunlu)<br />
+        10. Unvan Adı (Veritabanında mevcut olmalı, Zorunlu)<br />
+        11. Maaş (Sayısal, Zorunlu)<br />
+        12. E-posta (Geçerli format, Zorunlu)<br />
+        13. Telefon (İsteğe Bağlı)<br />
+        14. Adres (İsteğe Bağlı)<br />
+        15. İşe Giriş Tarihi (YYYY-MM-DD formatında, Zorunlu)<br />
+        16. İşten Çıkış Tarihi (YYYY-MM-DD formatında, İsteğe Bağlı)<br />
+        17. Aktif Mi? (TRUE/FALSE, Zorunlu)
+    </p>
+</div>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
+@if (TempData["WarningMessage"] != null)
+{
+    <div class="alert alert-warning" role="alert">
+        @TempData["WarningMessage"]
+    </div>
+}
+@if (TempData["ErrorList"] is List<string> errorList && errorList.Any())
+{
+    <div class="alert alert-danger" role="alert">
+        <h5>Aşağıdaki hatalar nedeniyle bazı personeller eklenemedi:</h5>
+        <ul>
+            @foreach (var error in errorList)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="BulkUpload" method="post" enctype="multipart/form-data">
+            <div class="form-group mb-3">
+                <label for="excelFile" class="control-label">Excel Dosyası Seçin (.xlsx)</label>
+                <input type="file" id="excelFile" name="excelFile" class="form-control rounded-pill" accept=".xlsx" />
+            </div>
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary rounded-pill shadow-sm">
+                    <i class="fas fa-upload"></i> Personelleri Yükle
+                </button>
+                <a asp-action="Index" asp-controller="Home" class="btn btn-secondary rounded-pill shadow-sm ms-2">
+                    <i class="fas fa-arrow-left"></i> Anasayfaya Geri Dön
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

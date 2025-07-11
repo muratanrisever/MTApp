@@ -23,6 +23,6 @@ namespace MTApp.Models
 
         [DataType(DataType.Date)]
         [Display(Name = "Bitiş Tarihi")]
-        public DateTime? EndDate { get; set; } // İsteğe bağlı, duyurunun ne zaman sona ereceği
+        public DateTime? EndDate { get; set; }
     }
 }

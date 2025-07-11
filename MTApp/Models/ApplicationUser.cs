@@ -3,11 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MTApp.Models
 {
-    // IdentityUser sınıfını genişleterek kendi kullanıcı modelimizi oluşturuyoruz.
-    // Buraya eklemek istediğiniz kullanıcıya özel alanları ekleyebilirsiniz.
     public class ApplicationUser : IdentityUser
     {
-        [PersonalData] // Bu alanın kişisel veri olduğunu belirtir.
+        [PersonalData]
         [Display(Name = "Ad")]
         [StringLength(50)]
         public string? FirstName { get; set; }
@@ -19,9 +17,9 @@ namespace MTApp.Models
 
         [Display(Name = "Sicil No")]
         [StringLength(20)]
-        public string? EmployeeNumber { get; set; } // Personel sicil numarası
+        public string? EmployeeNumber { get; set; }
 
         [Display(Name = "Aktif Mi?")]
-        public bool IsActive { get; set; } = true; // Kullanıcının aktif olup olmadığı
+        public bool IsActive { get; set; } = true;
     }
 }
