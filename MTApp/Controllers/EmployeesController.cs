@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MTApp.Data;
 using MTApp.Models;
-using Microsoft.AspNetCore.Hosting;
-using System.IO;
-using OfficeOpenXml; // EPPlus için gerekli using
-using OfficeOpenXml.Style; // EPPlus stil için (isteğe bağlı)
+using OfficeOpenXml;
 
 namespace MTApp.Controllers
 {
@@ -27,7 +20,6 @@ namespace MTApp.Controllers
             _hostEnvironment = hostEnvironment;
         }
 
-        // GET: Employees
         public async Task<IActionResult> Index(string searchString)
         {
             var employees = from e in _context.Employees select e;
@@ -47,7 +39,6 @@ namespace MTApp.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Employees/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -67,7 +58,6 @@ namespace MTApp.Controllers
             return View(employee);
         }
 
-        // GET: Employees/Create
         public IActionResult Create()
         {
             ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
@@ -75,7 +65,6 @@ namespace MTApp.Controllers
             return View();
         }
 
-        // POST: Employees/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,EmployeeNumber,FirstName,LastName,NationalId,DateOfBirth,Gender,MaritalStatus,Nationality,Email,PhoneNumber,Address,HireDate,TerminationDate,DepartmentId,TitleId,Salary,IsActive")] Employee employee, IFormFile? photoFile, IFormFile? resumeFile)
@@ -117,7 +106,6 @@ namespace MTApp.Controllers
             return View(employee);
         }
 
-        // GET: Employees/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -135,7 +123,6 @@ namespace MTApp.Controllers
             return View(employee);
         }
 
-        // POST: Employees/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeNumber,FirstName,LastName,NationalId,DateOfBirth,Gender,MaritalStatus,Nationality,Email,PhoneNumber,Address,HireDate,TerminationDate,DepartmentId,TitleId,Salary,PhotoUrl,ResumePath,IsActive")] Employee employee, IFormFile? photoFile, IFormFile? resumeFile)
@@ -217,7 +204,6 @@ namespace MTApp.Controllers
             return View(employee);
         }
 
-        // GET: Employees/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -237,7 +223,6 @@ namespace MTApp.Controllers
             return View(employee);
         }
 
-        // POST: Employees/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -269,16 +254,12 @@ namespace MTApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Employees/BulkUpload
-        // Excel ile toplu personel yükleme formunu gösterir.
         [HttpGet]
         public IActionResult BulkUpload()
         {
             return View();
         }
 
-        // POST: Employees/BulkUpload
-        // Excel dosyasını işler ve personelleri veritabanına kaydeder.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> BulkUpload(IFormFile excelFile)
@@ -295,8 +276,7 @@ namespace MTApp.Controllers
                 return View();
             }
 
-            // EPPlus lisans bağlamını ayarla (ticari kullanım için lisans anahtarı gerekebilir)
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Ticari olmayan kullanım için
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
             var importedEmployees = new List<Employee>();
             var errors = new List<string>();
@@ -318,14 +298,12 @@ namespace MTApp.Controllers
 
                         rowCount = worksheet.Dimension.Rows;
 
-                        // Başlık satırını atla (varsayılan olarak 1. satır başlık varsayılır)
                         for (int row = 2; row <= rowCount; row++)
                         {
                             try
                             {
-                                // Departman ve Unvan adlarını alıp ID'lerini bulacağız
-                                string departmentName = worksheet.Cells[row, 9].Text.Trim(); // Örnek: 9. sütun Departman Adı
-                                string titleName = worksheet.Cells[row, 10].Text.Trim(); // Örnek: 10. sütun Unvan Adı
+                                string departmentName = worksheet.Cells[row, 9].Text.Trim();
+                                string titleName = worksheet.Cells[row, 10].Text.Trim();
 
                                 var department = await _context.Departments.FirstOrDefaultAsync(d => d.Name == departmentName);
                                 var title = await _context.Titles.FirstOrDefaultAsync(t => t.Name == titleName);
@@ -351,18 +329,17 @@ namespace MTApp.Controllers
                                     Gender = worksheet.Cells[row, 6].Text.Trim(),
                                     MaritalStatus = worksheet.Cells[row, 7].Text.Trim(),
                                     Nationality = worksheet.Cells[row, 8].Text.Trim(),
-                                    DepartmentId = department.Id, // ID'yi ata
-                                    TitleId = title.Id,         // ID'yi ata
+                                    DepartmentId = department.Id,
+                                    TitleId = title.Id,
                                     Salary = decimal.Parse(worksheet.Cells[row, 11].Text.Trim()),
                                     Email = worksheet.Cells[row, 12].Text.Trim(),
                                     PhoneNumber = worksheet.Cells[row, 13].Text.Trim(),
                                     Address = worksheet.Cells[row, 14].Text.Trim(),
                                     HireDate = DateTime.Parse(worksheet.Cells[row, 15].Text.Trim()),
                                     TerminationDate = string.IsNullOrEmpty(worksheet.Cells[row, 16].Text.Trim()) ? (DateTime?)null : DateTime.Parse(worksheet.Cells[row, 16].Text.Trim()),
-                                    IsActive = bool.Parse(worksheet.Cells[row, 17].Text.Trim()) // Varsayılan olarak 17. sütun
+                                    IsActive = bool.Parse(worksheet.Cells[row, 17].Text.Trim())
                                 };
 
-                                // Veritabanında sicil numarası veya TC kimlik numarası zaten varsa atla veya güncelle
                                 if (await _context.Employees.AnyAsync(e => e.EmployeeNumber == employee.EmployeeNumber || e.NationalId == employee.NationalId))
                                 {
                                     errors.Add($"Satır {row}: Sicil Numarası '{employee.EmployeeNumber}' veya TC Kimlik Numarası '{employee.NationalId}' zaten mevcut. Bu personel atlandı.");
@@ -381,7 +358,7 @@ namespace MTApp.Controllers
 
                 if (importedEmployees.Any())
                 {
-                    _context.Employees.AddRange(importedEmployees); // Toplu ekleme
+                    _context.Employees.AddRange(importedEmployees); // Excel ile toplu ekleme - güncellenecek
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = $"{importedEmployees.Count} personel başarıyla eklendi.";
                 }
@@ -392,7 +369,7 @@ namespace MTApp.Controllers
 
                 if (errors.Any())
                 {
-                    TempData["ErrorList"] = errors; // Hataları TempData'ya kaydet
+                    TempData["ErrorList"] = errors;
                 }
 
                 return RedirectToAction(nameof(Index));
